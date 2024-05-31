@@ -42,7 +42,8 @@ class Game {
   };
   
   void gameLoop(int maxIterations, double trapActivationDistance) {
-    for (int i = 0; i < maxIterations; i++) {
+    int i=0;
+    while(i<maxIterations){ {
       for (int j = 0; j < grid.size(); j++) {
         if (grid[j]->getType() == 'C') {
           dynamic_cast<Character*>(grid[j])->move(1, 0);
@@ -50,7 +51,6 @@ class Game {
             if (grid[k]->getType() == 'T' &&
                 Utils::calculateDistance(grid[j]->getPos(), grid[k]->getPos()) <= trapActivationDistance) {
               dynamic_cast<Trap*>(grid[k])->apply(*grid[j]);
-              std::cout << "Character is trapped" << std::endl;
             }
           }
         }
@@ -68,8 +68,15 @@ class Game {
       if (win) {
         break;
       }
+      i++;
+    if ((i == maxIterations) && (win == false))
+    {
+          std::cout << "Maximum number of iterations reached. Game over." << std::endl;
+    };
+
     }
-    std::cout << "Maximum number of iterations reached. Game over." << std::endl;
+    
+    }
   }
 };
 
