@@ -1,82 +1,76 @@
 #ifndef GAME_H
 #define GAME_H
-#include "Cell.h"
-#include "Effect.h"
-#include "Utils.h"
-#include "Character.h"
-#include "Trap.h"
+
 #include <iostream>
-#include <tuple>
 #include <random>
+#include <tuple>
 #include <vector>
 
-using namespace std;    
-class Game
-{
-private:
-    std::vector<Cell*> grid;
-    int numCharacters;
-    int numTraps;
-     int gridWidth;
-      int gridHeight;
-      int maxIterations;
-       double trapActivationDistance;
-public:
-    Game(/* args */){};
-    ~Game(){};
-std::vector<Cell*>& getGrid(){
-        return grid;
-    };
-     std::vector<Cell*>  initGame(int numCharacters, int numTraps, int gridWidth, int gridHeight)
-    {grid.clear();
-for (int i = 0; i < numCharacters; i++)
-{
-    grid.push_back(new Character(rand() % gridWidth, rand() % gridHeight));
-}
-for (int i = 0; i < numTraps; i++)
-{
-    grid.push_back(new Trap(rand() % gridWidth, rand() % gridHeight));
-}
-return grid;
-    };
-    void gameLoop(int maxIterations, double trapActivationDistance)
-    {
-        int i = 0;
-        while(i < maxIterations)
-        {
-            for (int j = 0; j < grid.size(); j++)
-            {
-                if (grid[j]->getType()=='C')
-                {
-                    dynamic_cast<Character*>(grid[j])->move(1,0);
-                    for (int k = 0; k <  grid.size(); i++)
-                    {
-                       if (grid[k]->getType()=='T'&&  Utils::calculateDistance(grid[j]->getPos(),grid[k]->getPos()) <= trapActivationDistance)
-                       {
-                        dynamic_cast<Trap*>(grid[k])->apply(*grid[j]);
-                         std::cout<<"Character is trapped"<<std::endl;
-                       }
-                    }
-                    
-                }
-            }
-            bool win = false;
-           for (int j = 0; j < grid.size(); j++)
-            {
-                std::tuple<int,int> pos = grid[j]->getPos();
-                if ((get<0>(pos)>=gridWidth-1 || get<1>(pos)>=gridHeight-1 || get<0>(pos)<=0 || get<1>(pos)<=0) && grid[j]->getType()=='C')
-                {win = true;
-                std::cout<<"Character has won the game!"<<std::endl;
-                break;}
-            i++;
-        }
+#include "Cell.h"
+#include "Character.h"
+#include "Effect.h"
+#include "Trap.h"
+#include "Utils.h"
+
+using namespace std;
+
+class Game {
+ private:
+  std::vector<Cell*> grid;
+  int numCharacters;
+  int numTraps;
+  int gridWidth;
+  int gridHeight;
+  int maxIterations;
+  double trapActivationDistance;
+
+ public:
+  Game(/* args */){};
+  std::vector<Cell*>& getGrid() { return grid; };
+  std::vector<Cell*> initGame(int numCharacters, int numTraps, int gridWidth,
+                              int gridHeight) {
+    grid.clear();
+    for (int i = 0; i < numCharacters; i++) {
+      std::tuple<int, int> pos = Utils::generateRandomPos(gridWidth, gridHeight);
+      grid.push_back(new Character(std::get<0>(pos), std::get<1>(pos)));
     }
-    std::cout<<"Maximum number of iterations reached. Game over."<<std::endl;
-
-}
+    for (int i = 0; i < numTraps; i++) {
+      std::tuple<int, int> pos = Utils::generateRandomPos(gridWidth, gridHeight);
+      grid.push_back(new Trap(std::get<0>(pos), std::get<1>(pos)));
+    }
+    return grid;
+  };
+  
+  void gameLoop(int maxIterations, double trapActivationDistance) {
+    for (int i = 0; i < maxIterations; i++) {
+      for (int j = 0; j < grid.size(); j++) {
+        if (grid[j]->getType() == 'C') {
+          dynamic_cast<Character*>(grid[j])->move(1, 0);
+          for (int k = 0; k < grid.size(); k++) {
+            if (grid[k]->getType() == 'T' &&
+                Utils::calculateDistance(grid[j]->getPos(), grid[k]->getPos()) <= trapActivationDistance) {
+              dynamic_cast<Trap*>(grid[k])->apply(*grid[j]);
+              std::cout << "Character is trapped" << std::endl;
+            }
+          }
+        }
+      }
+      bool win = false;
+      for (int j = 0; j < grid.size(); j++) {
+        std::tuple<int, int> pos = grid[j]->getPos();
+        if ((std::get<0>(pos) >= gridWidth - 1 || std::get<1>(pos) >= gridHeight - 1 ||
+             std::get<0>(pos) <= 0 || std::get<1>(pos) <= 0) && grid[j]->getType() == 'C') {
+          win = true;
+          std::cout << "Character has won the game!" << std::endl;
+          break;
+        }
+      }
+      if (win) {
+        break;
+      }
+    }
+    std::cout << "Maximum number of iterations reached. Game over." << std::endl;
+  }
 };
-
-
-
 
 #endif
