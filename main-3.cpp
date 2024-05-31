@@ -7,11 +7,11 @@
 #include <iostream>
 #include <tuple>
 #include <random>
-
+#include <vector>
 int main(int argc, char const *argv[])
 {
     Game game;
-    game.init(2, 2, 10, 10);
+    game.initGame(1, 1, 10, 10);
     game.gameLoop(10, 10);
     return 0;
 }
