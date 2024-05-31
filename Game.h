@@ -15,9 +15,6 @@ class Game
 {
 private:
     std::vector<Cell*> grid;
-    std::vector<Cell*>& getGrid(){
-        return grid;
-    };
     int numCharacters;
     int numTraps;
      int gridWidth;
@@ -27,8 +24,10 @@ private:
 public:
     Game(/* args */){};
     ~Game(){};
-
-    void init(int numCharacters, int numTraps, int gridWidth, int gridHeight)
+std::vector<Cell*>& getGrid(){
+        return grid;
+    };
+     std::vector<Cell*>  initGame(int numCharacters, int numTraps, int gridWidth, int gridHeight)
     {grid.clear();
 for (int i = 0; i < numCharacters; i++)
 {
@@ -38,6 +37,7 @@ for (int i = 0; i < numTraps; i++)
 {
     grid.push_back(new Trap(rand() % gridWidth, rand() % gridHeight));
 }
+return grid;
     };
     void gameLoop(int maxIterations, double trapActivationDistance)
     {
