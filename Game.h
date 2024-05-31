@@ -63,7 +63,8 @@ for (int i = 0; i < numTraps; i++)
             bool win = false;
            for (int j = 0; j < grid.size(); j++)
             {
-                if (grid[j]->getType()=='C')
+                std::tuple<int,int> pos = grid[j]->getPos();
+                if ((get<0>(pos)>=gridWidth-1 || get<1>(pos)>=gridHeight-1 || get<0>(pos)<=0 || get<1>(pos)<=0) && grid[j]->getType()=='C')
                 {win = true;
                 std::cout<<"Character has won the game!"<<std::endl;
                 break;}
